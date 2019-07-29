@@ -15,11 +15,43 @@
 		values(seq_board1.nextval, #{title}, #{content}, #{writer})
 	</insert>
 	
-	<insert id="isnertSelectKey">
+	<insert id="insertSelectKey">
 		<selectKey keyProperty="bno" order="BEFORE" resultType="long">
 			select seq_board1.nextval from dual
 		</selectKey>
 		insert into tbl_board1(bno, title, content, writer) values(#{bno}, #{title}, #{content}, #{writer})
 	</insert>
 	  	
+	 <select id="read" resultType="org.zerock.domain.BoardVO">
+	 	select * from tbl_board1
+	 	where bno = #{bno}
+	 </select>
+	 
+	 <delete id="delete">
+	 	delete from tbl_board1 where bno = #{bno}
+	 </delete>
+	 
+	 <update id="update">
+	 	update tbl_board1 set title=#{title}, content=#{content}, writer=#{writer}, updatedate=sysdate where bno=#{bno}
+	 </update>
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

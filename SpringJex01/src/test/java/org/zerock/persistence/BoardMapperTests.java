@@ -24,17 +24,52 @@ public class BoardMapperTests {
 //		boardMapper.getList().forEach(vo->log.info(vo));
 //	}
 	
-	@Test
-	public void testInsert() {
-		BoardVO board = new BoardVO();
-		board.setContent("테스트6");
-		board.setTitle("테스트제목6");
-		board.setWriter("user06");
-		
-		boardMapper.insert(board);
-		log.info(board);
-		
-	}
+//	@Test
+//	public void testInsert() {
+//		BoardVO board = new BoardVO();
+//		board.setContent("테스트6");
+//		board.setTitle("테스트제목6");
+//		board.setWriter("user06");
+//		
+//		boardMapper.insert(board);
+//		log.info(board);
+//		
+//	}
+	
+//	@Test
+//	public void testInsertSelectKey() {
+//		BoardVO board = new BoardVO();
+//		board.setContent("새로 작성하는 내용 select Key");
+//		board.setTitle("새록 작성하는 제목 select Key");
+//		board.setWriter("user07");
+//		
+//		boardMapper.insertSelectKey(board);
+//		log.info(board);
+//	}
+	
+//	@Test
+//	public void testRead() {
+//		log.info(boardMapper.read(7L));
+//	}
+	
+//	@Test
+//	public void testDelete() {
+//		log.info("Deleted count: " + boardMapper.delete(3L));	
+//	}
+	
+//	@Test
+//	public void testUpdate() {
+//		BoardVO board = new BoardVO();
+//		board.setBno(1L);
+//		board.setContent("수정된 내용1");
+//		board.setTitle("수정된 제목1");
+//		board.setWriter("updated user1");
+//		
+//		log.info(boardMapper.update(board));
+//	}
+	
+	
+	
 }
 
 
