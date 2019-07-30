@@ -29,6 +29,11 @@ public class BoardController {
 		model.addAttribute("list", service.getList());
 	}
 	
+	@GetMapping("/register")
+	public void register() {
+		
+	}
+	
 	@PostMapping("/register")
 	public String register(BoardVO board, RedirectAttributes rttr) { //RedirectAttributes를 파라미터로 사용하게 되면 리턴은 리다이렉트로 해야한다.
 		log.info("register(BoardVO board, RedirectAttributes rttr)");
@@ -60,8 +65,7 @@ public class BoardController {
 		}
 		return "redirect:/board/list";
 	}
-	
-	
+
 }
 
 
