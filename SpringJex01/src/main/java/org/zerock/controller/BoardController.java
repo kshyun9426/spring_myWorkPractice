@@ -42,7 +42,7 @@ public class BoardController {
 		return "redirect:/board/list"; //리턴 시에는 'redirect:'접두어를 사용하는데 이를 이용하면 스프링 MVC가 내부적으로 response.sendRedirect()를 처리해준다.
 	}
 	
-	@GetMapping("/get")
+	@GetMapping({"/get", "/modify"})
 	public void get(@RequestParam("bno")Long bno, Model model) {
 		log.info("get(@RequestParam(\"bno\")Long bno, Model model)");
 		model.addAttribute("board",service.get(bno));
@@ -66,6 +66,7 @@ public class BoardController {
 		return "redirect:/board/list";
 	}
 
+	
 }
 
 

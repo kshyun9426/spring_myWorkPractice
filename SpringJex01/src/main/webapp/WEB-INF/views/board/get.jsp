@@ -35,10 +35,11 @@
 					<label>Writer</label>
 					<input class="form-control" name="writer" value="<c:out value='${board.writer}'/>" readonly="readonly"/>
 				</div>
-				<button data-oper="modify" class="btn btn-default" 
-					onclick="location.href='/board/modify?bno=<c:out value="${board.bno}"/>'">Modify</button>
-				<button data-oper="list" 
-					class="btn btn-info" onclick="location.href='/board/list'">List</button>
+				<button class="btn btn-default" data-oper="modify">Modify</button>
+				<button class="btn btn-info" data-oper="list">List</button>
+				<form id="operForm" action="/board/modify" method="GET">
+					<input type="hidden" id="bno" name="bno" value="<c:out value='${board.bno}'/>"/>
+				</form>
 			</div>
 			<!-- /.panel-body -->
 		</div>
@@ -50,7 +51,23 @@
 
 <%@include file="../includes/footer.jsp"%>
 
-
+<script type="text/javascript">
+	$(document).ready(function(){
+		var operForm = $("#operForm");
+		
+		//$("button[data-oper='modify']")문법 설명
+		//https://api.jquery.com/attribute-equals-selector/
+		$("button[data-oper='modify']").on("click", function(e){
+			operForm.attr("action", "/board/modify").submit();
+		});
+		
+		$("button[data-oper='list']").on("click", function(e){
+			operForm.find("#bno").remove(); //id="bno" 가 속한 태그를 지움
+			operForm.attr("action", "/board/list");
+			operForm.submit();
+		});
+	});
+</script>
 
 
 
