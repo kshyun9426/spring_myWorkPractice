@@ -34,6 +34,22 @@
 	 <update id="update">
 	 	update tbl_board1 set title=#{title}, content=#{content}, writer=#{writer}, updatedate=sysdate where bno=#{bno}
 	 </update>
+	 
+	 <select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
+	 	<![CDATA[
+	 		select 
+	 			bno, title, content, writer, regdate, updatedate
+	 		from 
+	 			(
+				select /*+INDEX_DESC(TBL_BOARD1 PK_BOARD1) */
+	 				rownum rn, bno, title, content, writer, regdate, updatedate
+	 			from 
+	 				TBL_BOARD1
+	 			where rownum <= #{pageNum} * #{amount}	
+	 			)
+	 		where rn > (#{pageNum}-1)*#{amount}
+	 	]]>
+	 </select>
 </mapper>
 
 

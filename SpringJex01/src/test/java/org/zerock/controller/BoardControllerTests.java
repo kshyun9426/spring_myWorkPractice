@@ -1,7 +1,5 @@
 package org.zerock.controller;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +34,14 @@ public class BoardControllerTests {
 	
 //	@Test
 //	public void testList() throws Exception {
+//		
+//		log.info(mockMvc.perform(MockMvcRequestBuilders.get("/board/list")
+//				.param("pageNum", "2")
+//				.param("amount", "10"))
+//				.andReturn()
+//				.getModelAndView()
+//				.getModelMap());
+		
 //		log.info(mockMvc.perform(MockMvcRequestBuilders.get("/board/list")) //MockMvcRequestBuilders를 사용해서 get방식 호출
 //				.andReturn()
 //				.getModelAndView()
