@@ -25,6 +25,27 @@ public interface BoardMapper {
 	//회원 수정
 	public int update(BoardVO board);
 	
-	
+	//페이징 처리를 위한 회원정보 list
 	public List<BoardVO> getListWithPaging(Criteria cri);
+	
+	//회원 전체 수
+	public int getTotalCount(Criteria cri);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

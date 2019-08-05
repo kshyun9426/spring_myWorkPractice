@@ -3,6 +3,7 @@ package org.zerock.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,8 +29,9 @@ public class BoardController {
 	@GetMapping("/list")
 	public void list(Criteria cri, Model model) {
 		log.info("called list()");
+		int memberTotal = service.getTotal(cri);
 		model.addAttribute("list", service.getList(cri));
-		model.addAttribute("pageMaker", new PageDTO(cri, 123));
+		model.addAttribute("pageMaker", new PageDTO(cri, memberTotal));
 	}
 	
 	@GetMapping("/register")
@@ -46,27 +48,39 @@ public class BoardController {
 	}
 	
 	@GetMapping({"/get", "/modify"})
-	public void get(@RequestParam("bno")Long bno, Model model) {
+	public void get(@RequestParam("bno")Long bno, @ModelAttribute("cri")Criteria cri, Model model) {
 		log.info("get(@RequestParam(\"bno\")Long bno, Model model)");
 		model.addAttribute("board",service.get(bno));
 	}
 	
 	@PostMapping("/modify")
-	public String modify(BoardVO board, RedirectAttributes rttr) {
+	public String modify(BoardVO board, RedirectAttributes rttr, @ModelAttribute("cri")Criteria cri) {
 		log.info("modify(BoardVO board, RedirectAttributes rttr)");
+	
 		if(service.modify(board)) {
-			rttr.addFlashAttribute("result", board);
+			rttr.addFlashAttribute("result", "success");
 		}
-		return "redirect:/board/list";
+		//Criteria클래스의 UriComponentBuilder를 사용해서 URL형태로 만들어줌
+//		rttr.addAttribute("pageNum", cri.getPageNum());
+//		rttr.addAttribute("amount", cri.getAmount());
+//		rttr.addAttribute("type", cri.getType());
+//		rttr.addAttribute("keyword", cri.getKeyword());
+		
+		return "redirect:/board/list" + cri.getListLink();
 	}
 	
 	@PostMapping("/remove")
-	public String remove(@RequestParam Long bno, RedirectAttributes rttr) {
+	public String remove(@RequestParam Long bno, RedirectAttributes rttr, @ModelAttribute("cri")Criteria cri) {
 		log.info("remove(@RequestParam Long bno, RedirectAttributes rttr)");
 		if(service.remove(bno)) {
 			rttr.addFlashAttribute("result", "success");
-		}
-		return "redirect:/board/list";
+		}		
+//		rttr.addAttribute("pageNum", cri.getPageNum());
+//		rttr.addAttribute("amount", cri.getAmount());
+//		rttr.addAttribute("type", cri.getType());
+//		rttr.addAttribute("keyword", cri.getKeyword());
+		
+		return "redirect:/board/list" + cri.getListLink();
 	}
 
 	

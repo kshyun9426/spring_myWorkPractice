@@ -18,7 +18,13 @@
 			<div class="panel-heading">Board Modify Page</div>
 			
 			<div class="panel-body">
-				<form role="form" action="/board/modify" method="POST">				
+				<form role="form" action="/board/modify" method="POST">			
+				
+					<input type="hidden" name="pageNum" value="<c:out value='${cri.pageNum}'/>"/>
+					<input type="hidden" name="amount" value="<c:out value='${cri.amount}'/>"/>
+					<input type="hidden" name="type" value="<c:out value='${cri.type}'/>"/>
+					<input type="hidden" name="keyword" value="<c:out value='${cri.keyword}'/>"/>
+					
 					<div class="form-group">
 						<label>Bno</label> 
 						<input class="form-control" name="bno" value="<c:out value='${board.bno}'/>" readonly="readonly"/>
@@ -79,7 +85,18 @@
 				formObj.attr("action", "/board/remove");
 			}else if(operation === "list"){
 				formObj.attr("action", "/board/list").attr("method", "GET");
+				var pageNumTag = $("input[name='pageNum']").clone();
+				var amountTag = $("input[name='amount']").clone();
+				var typeTag = $("input[name='type']").clone();
+				var keywordTag = $("input[name='keyword']").clone();
+				
 				formObj.empty(); //리스트로의 이동은 아무런 파라미터가 없기 때문에 <form>태그의 모든 내용은 삭제한 상태로 submit()을 진행한다.
+				
+				//목록페이지의 번호와 갯수를 추가함(위에서 empty()시켰기 때문에)
+				formObj.append(pageNumTag); 
+				formObj.append(amountTag);
+				formObj.append(typeTag);
+				formObj.append(keywordTag);
 			}
 			formObj.submit();
 		});
