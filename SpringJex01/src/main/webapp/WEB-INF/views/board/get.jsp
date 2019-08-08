@@ -55,6 +55,52 @@
 
 <%@include file="../includes/footer.jsp"%>
 
+<!-- 댓글처리하는 javascript모듈 -->
+<script type="text/javascript" src="/resources/js/reply.js"></script>
+
+<script type="text/javascript">
+
+	var bnoValue = "<c:out value='${board.bno}'/>";
+
+	console.log("=====================");
+	console.log("REPLY ADD TEST");
+	//replyService의 add()에 던져야 하는 파라미터는 JavaScript의 객체 타입으로 만들어서 전송해 주고, Ajax전송 결과를 처리하는 함수를 파라미터로 같이 전달
+	replyService.add({reply:"JS TEST", replyer: "tester", bno: bnoValue}
+		,function(result){
+			alert("RESULT: " + result);	
+		}
+	);
+	
+	console.log("=====================");
+	console.log("REPLY LIST TEST");
+	replyService.getList({bno:bnoValue, page:1}, function(list){
+		for(var i=0, len=list.length||0; i<len; i++){
+			console.log(list[i]);
+		}
+	});
+	
+	
+	console.log("=====================");
+	console.log("REPLY REMOVE TEST");
+	replyService.remove(1, function(count){
+		console.log(count);
+		if(count === "success"){
+			alert("REMOVED");
+		}}
+		,function(error){
+			alert("ERROR....");
+		}
+	);
+	
+	console.log("=====================");
+	console.log("REPLY UPDATE TEST");
+	replyService.update({rno:18, bno:bnoValue, reply:"modified reply..."},
+			function(result){
+				alert("수정 완료");
+			}
+	);
+</script>
+
 <script type="text/javascript">
 	$(document).ready(function(){
 		var operForm = $("#operForm");

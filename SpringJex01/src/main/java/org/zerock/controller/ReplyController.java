@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.zerock.domain.Criteria;
 import org.zerock.domain.ReplyVO;
@@ -28,6 +29,7 @@ public class ReplyController {
 	//스프링4.3이상에서는 필드가 하나만 있을 경우 자동 주입처리한다.
 	private ReplyService replyService;
 
+	//댓글 추가
 	@PostMapping(value="/new", consumes="application/json", produces= {MediaType.TEXT_PLAIN_VALUE})
 	public ResponseEntity<String> create(@RequestBody ReplyVO vo){
 		log.info("ReplyVO: " + vo);
@@ -38,6 +40,7 @@ public class ReplyController {
 				: new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
+	//댓글 리스트가져오기
 	@GetMapping(value="/pages/{bno}/{page}", produces= {MediaType.APPLICATION_JSON_UTF8_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<List<ReplyVO>> getList(@PathVariable("bno")Long bno, @PathVariable("page")int page){
 		log.info("getList()... ");
@@ -46,16 +49,30 @@ public class ReplyController {
 		return new ResponseEntity<List<ReplyVO>>(replyService.getList(cri, bno), HttpStatus.OK);
 	}
 	
+	//댓글 조회
 	@GetMapping(value="/{rno}", produces= {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<ReplyVO> get(@PathVariable("rno")Long rno){
 		log.info("get: " + rno);
 		return new ResponseEntity<>(replyService.get(rno), HttpStatus.OK);
 	}
 	
+	//댓글 삭제
 	@DeleteMapping(value="/{rno}", produces= {MediaType.TEXT_PLAIN_VALUE})
 	public ResponseEntity<String> remove(@PathVariable("rno")Long rno){
 		log.info("remove: " + rno);
 		return replyService.remove(rno) == 1 ? new ResponseEntity<>("success", HttpStatus.OK)
+				: new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	
+	//댓글 수정
+	@RequestMapping(method= {RequestMethod.PUT, RequestMethod.PATCH}, value="/{rno}", consumes="application/json"
+			, produces= {MediaType.TEXT_PLAIN_VALUE})
+	public ResponseEntity<String> modify(@RequestBody ReplyVO vo, @PathVariable("rno")Long rno){
+		vo.setRno(rno);
+		log.info("rno: " + rno);
+		log.info("modify: " + vo);
+		return replyService.modify(vo) == 1 ? new ResponseEntity<>("success", HttpStatus.OK)
 				: new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }	
