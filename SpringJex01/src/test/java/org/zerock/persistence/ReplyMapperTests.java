@@ -60,12 +60,23 @@ public class ReplyMapperTests {
 //		log.info("Update Count: " + count);
 //	}
 	
-	@Test
-	public void testList() {
-		Criteria cri = new Criteria();
-		List<ReplyVO> replies = replyMapper.getListWithPaging(cri, bnoArr[0]);
-		replies.forEach(vo->log.info(vo));
-	}
+//	@Test
+//	public void testList() {
+//		Criteria cri = new Criteria();
+//		List<ReplyVO> replies = replyMapper.getListWithPaging(cri, bnoArr[0]);
+//		replies.forEach(vo->log.info(vo));
+//	}
+	
+//	@Test
+//	public void testListWithPaging() {
+//		replyMapper.getListWithPaging(new Criteria(), 36L).forEach(vo->log.info(vo));
+//	}
+	
+//	@Test
+//	public void testGetCountByBno() {
+//		log.info(replyMapper.getCountByBno(36L));
+//	}
+	
 }
 
 

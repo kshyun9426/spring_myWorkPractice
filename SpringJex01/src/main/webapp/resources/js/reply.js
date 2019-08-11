@@ -36,13 +36,12 @@ var replyService = (function(){
 	function getList(param, callback, error){
 		
 		var bno = param.bno;
-		
 		var page = param.page || 1;
 		
 		$.getJSON("/replies/pages/" + bno + "/" + page + ".json",
 			function(data){
 				if(callback){
-					callback(data);
+					callback(data.replyCnt, data.list);
 				}
 			}).fail(function(xhr, status, err){
 				if(error){
@@ -52,6 +51,7 @@ var replyService = (function(){
 		);
 	}
 	
+	//댓글 삭제
 	function remove(rno, callback, error){
 		$.ajax({
 			type : 'delete',
@@ -69,6 +69,7 @@ var replyService = (function(){
 		});
 	}
 	
+	//댓글 수정
 	function update(reply, callback, error){
 		$.ajax({
 			type : "put",
@@ -88,11 +89,53 @@ var replyService = (function(){
 		});
 	}
 	
+	//댓글 조회
+	function get(rno, callback, error){
+		$.get("/replies/" + rno + ".json", function(result){
+				if(callback){
+					callback(result);
+				}
+			}).fail(function(xhr, status, err){
+				if(error){
+					error();
+				}
+			});
+	}
+	
+	//댓글의 날짜가 오늘이면 시/분/초로 그전이면 년/월/일로 출력
+	function displayTime(timeValue){
+		
+		var today = new Date();
+		
+		var gap = today - timeValue;
+		
+		var str="";
+		var dateObj = new Date(timeValue);
+		
+		if(gap < 1000 * 60 * 60 * 24){ //오늘이라면
+			var hh = dateObj.getHours();
+			var mi = dateObj.getMinutes();
+			var ss = dateObj.getSeconds();
+			
+			return [(hh > 9 ? '' : '0')+hh, ':', (mi > 9 ? '' : '0')+mi, ':', (ss > 9 ? '' : '0')+ss].join(''); 
+		}else{
+			var yy = dateObj.getFullYear();
+			var mm = dateObj.getMonth()+1; //getMonth() method is zero-based
+			var dd = dateObj.getDate();
+			
+			return [yy, '/', (mm > 9 ? '' : '0')+mm, '/', (dd > 9 ? '' : '0')+dd].join('');
+		}
+		
+	};
+
+	
 	return {
 		add:add,
 		getList:getList,
 		remove : remove,
-		update : update
+		update : update,
+		get : get,
+		displayTime : displayTime
 	};
 	
 	

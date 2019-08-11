@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zerock.domain.Criteria;
+import org.zerock.domain.ReplyPageDTO;
 import org.zerock.domain.ReplyVO;
 import org.zerock.mapper.ReplyMapper;
 
@@ -46,6 +47,13 @@ public class ReplyServiceImpl implements ReplyService {
 	public List<ReplyVO> getList(Criteria cri, Long bno) {
 		log.info("ReplyServiceImple of getList(Criteria cri, Long bno)...");
 		return replyMapper.getListWithPaging(cri, bno);
+	}
+	
+	@Override
+	public ReplyPageDTO getListPage(Criteria cri, Long bno) {
+		int replyCount = replyMapper.getCountByBno(bno);
+		List<ReplyVO> replyList = replyMapper.getListWithPaging(cri, bno);
+		return new ReplyPageDTO(replyCount, replyList);
 	}
 }
 

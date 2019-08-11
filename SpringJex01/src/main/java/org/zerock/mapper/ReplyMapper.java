@@ -16,5 +16,8 @@ public interface ReplyMapper {
 	
 	public int update(ReplyVO reply);
 	
+	//mybatis에 매개변수를 2개이상 사용하기 위해선 @Param어노테이션을 사용함
 	public List<ReplyVO> getListWithPaging(@Param("cri")Criteria cri, @Param("bno")Long bno);
+	
+	public int getCountByBno(Long bno);
 }
