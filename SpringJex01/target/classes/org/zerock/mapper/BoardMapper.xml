@@ -58,11 +58,11 @@
 	 <select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
 	 	<![CDATA[
 	 		select 
-	 			bno, title, content, writer, regdate, updatedate
+	 			bno, title, content, writer, regdate, updatedate, replycnt
 	 		from 
 	 			(
 				select /*+INDEX_DESC(TBL_BOARD1 PK_BOARD1) */
-	 				rownum rn, bno, title, content, writer, regdate, updatedate
+	 				rownum rn, bno, title, content, writer, regdate, updatedate, replycnt
 	 			from 
 	 				TBL_BOARD1
 	 			where
@@ -78,6 +78,10 @@
 	 <select id="getTotalCount" resultType="int">
 	 	select count(*) from tbl_board1 where <include refid="criteria"></include> bno > 0
 	 </select>
+	 
+	 <update id="updateReplyCnt">
+	 	update tbl_board1 set replyCnt = replyCnt + #{amount} where bno=#{bno}
+	 </update>
 </mapper>
 
 

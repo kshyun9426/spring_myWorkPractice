@@ -83,15 +83,16 @@ public class BoardMapperTests {
 //		list.forEach(board->log.info(board));
 //	}
 	
-	@Test
-	public void testSearch() {
-		Criteria cri = new Criteria();
-		cri.setKeyword("새로");
-		cri.setType("T");
-		
-		List<BoardVO> list = boardMapper.getListWithPaging(cri);
-		list.forEach(vo->log.info(vo));
-	}
+//	@Test
+//	public void testSearch() {
+//		Criteria cri = new Criteria();
+//		cri.setKeyword("새로");
+//		cri.setType("T");
+//		
+//		List<BoardVO> list = boardMapper.getListWithPaging(cri);
+//		list.forEach(vo->log.info(vo));
+//	}
+	
 }
 
 
