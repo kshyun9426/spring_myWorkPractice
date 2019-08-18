@@ -42,6 +42,13 @@ public class BoardController {
 	@PostMapping("/register")
 	public String register(BoardVO board, RedirectAttributes rttr) { //RedirectAttributes를 파라미터로 사용하게 되면 리턴은 리다이렉트로 해야한다.
 		log.info("register(BoardVO board, RedirectAttributes rttr)");
+		
+		log.info("==================================================================");
+		log.info("register: " + board);
+		if(board.getAttachList() != null) {
+			board.getAttachList().forEach(vo->log.info(vo));
+		}
+		log.info("==================================================================");
 		service.register(board);
 		rttr.addFlashAttribute("result", board.getBno());
 		return "redirect:/board/list"; //리턴 시에는 'redirect:'접두어를 사용하는데 이를 이용하면 스프링 MVC가 내부적으로 response.sendRedirect()를 처리해준다.
