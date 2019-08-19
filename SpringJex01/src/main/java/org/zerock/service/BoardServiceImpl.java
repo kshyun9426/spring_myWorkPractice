@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.zerock.domain.BoardAttachVO;
 import org.zerock.domain.BoardVO;
 import org.zerock.domain.Criteria;
 import org.zerock.mapper.BoardAttachMapper;
@@ -71,6 +72,12 @@ public class BoardServiceImpl implements BoardService {
 	public int getTotal(Criteria cri) {
 		log.info("BoardServiceImpl of getTotal()......");
 		return boardMapper.getTotalCount(cri);
+	}
+	
+	@Override
+	public List<BoardAttachVO> getAttachList(Long bno){
+		log.info("BoardServiceImple of getAttachLIst()........");
+		return boardAttachMapper.findByBno(bno);
 	}
 	
 }
