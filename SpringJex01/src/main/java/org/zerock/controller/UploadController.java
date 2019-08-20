@@ -234,11 +234,11 @@ public class UploadController {
 			//일반 파일인 경우 삭제, 이미지의 썸네일파일 삭제
 			file = new File("C:\\uploadEx\\" + URLDecoder.decode(fileName, "UTF-8"));
 			file.delete();
-			if(type.equals("image")) { //�̹����������� ����
+			if(type.equals("image")) { //이미지원본파일 삭제
 				String originFileName = file.getAbsolutePath().replace("s_", "");
 				log.info("deleted originImageName: " + originFileName);
 				file = new File(originFileName);
-				file.delete();
+				file.delete(); //파일 삭제
 			}
 		}catch(UnsupportedEncodingException e) {
 			e.printStackTrace();

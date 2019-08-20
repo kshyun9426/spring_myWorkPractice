@@ -5,60 +5,6 @@
 
 <%@include file="../includes/header.jsp"%>
 
-<div class="row">
-	<div class="col-lg-12">
-		<h1 class="page-header">Board Read</h1>
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-lg-12">
-		<div class="panel panel-default">
-		
-			<div class="panel-heading">Board Read Page</div>
-			<div class="panel-body">
-				
-				<div class="form-group">
-					<label>Bno</label> 
-					<input class="form-control" name="bno" value="<c:out value='${board.bno}'/>" readonly="readonly"/>
-				</div>
-				<div class="form-group">
-					<label>Title</label> 
-					<input class="form-control" name="title" value="<c:out value='${board.title}'/>" readonly="readonly"/>
-				</div>
-				<div class="form-group">
-					<label>Text area</label>
-					<textarea class="form-control" rows="3" name="content" readonly="readonly"><c:out value='${board.content}'/>
-					</textarea>
-				</div>
-				<div class="form-group">
-					<label>Writer</label>
-					<input class="form-control" name="writer" value="<c:out value='${board.writer}'/>" readonly="readonly"/>
-				</div>
-				<button class="btn btn-default" data-oper="modify">Modify</button>
-				<button class="btn btn-info" data-oper="list">List</button>
-				<form id="operForm" action="/board/modify" method="GET">
-					<input type="hidden" id="bno" name="bno" value="<c:out value='${board.bno}'/>"/>
-					<input type="hidden" name="pageNum" value="<c:out value='${cri.pageNum}'/>"/>
-					<input type="hidden" name="amount" value="<c:out value='${cri.amount}'/>"/>
-					<input type="hidden" name="type" value="<c:out value='${cri.type}'/>"/>
-					<input type="hidden" name="keyword" value="<c:out value='${cri.keyword}'/>"/>
-				</form>
-			</div>
-			<!-- /.panel-body -->
-		</div>
-		<!-- /.panel panel-default -->
-	</div>
-	<!-- /.col-lg-12 -->
-</div>
-<!-- ./row -->
-
-<div class="bigPictureWrapper">
-	<div class="bigPicture">
-	
-	</div>
-</div>
-
 <style>
 .uploadResult{
 	width: 100%;
@@ -112,6 +58,59 @@
 }
 </style>
 
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Board Read</h1>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+		
+			<div class="panel-heading">Board Read Page</div>
+			<div class="panel-body">
+				
+				<div class="form-group">
+					<label>Bno</label> 
+					<input class="form-control" name="bno" value="<c:out value='${board.bno}'/>" readonly="readonly"/>
+				</div>
+				<div class="form-group">
+					<label>Title</label> 
+					<input class="form-control" name="title" value="<c:out value='${board.title}'/>" readonly="readonly"/>
+				</div>
+				<div class="form-group">
+					<label>Text area</label>
+					<textarea class="form-control" rows="3" name="content" readonly="readonly"><c:out value='${board.content}'/>
+					</textarea>
+				</div>
+				<div class="form-group">
+					<label>Writer</label>
+					<input class="form-control" name="writer" value="<c:out value='${board.writer}'/>" readonly="readonly"/>
+				</div>
+				<button class="btn btn-default" data-oper="modify">Modify</button>
+				<button class="btn btn-info" data-oper="list">List</button>
+				<form id="operForm" action="/board/modify" method="GET">
+					<input type="hidden" id="bno" name="bno" value="<c:out value='${board.bno}'/>"/>
+					<input type="hidden" name="pageNum" value="<c:out value='${cri.pageNum}'/>"/>
+					<input type="hidden" name="amount" value="<c:out value='${cri.amount}'/>"/>
+					<input type="hidden" name="type" value="<c:out value='${cri.type}'/>"/>
+					<input type="hidden" name="keyword" value="<c:out value='${cri.keyword}'/>"/>
+				</form>
+			</div>
+			<!-- /.panel-body -->
+		</div>
+		<!-- /.panel panel-default -->
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+<!-- ./row -->
+
+<div class="bigPictureWrapper">
+	<div class="bigPicture">
+	
+	</div>
+</div>
 <!-- 첨부파일 관련 div -->
 <div class="row">
 	<div class="col-lg-12">
@@ -245,7 +244,7 @@
  -->
  
 <script>
-//첨부파일 관련 로딩 함수
+//첨부파일 관련 로딩 함수(즉시 실행 함수)
 $(document).ready(function(){(function(){
 		
 		var bno = "<c:out value='${board.bno}'/>";
@@ -274,7 +273,30 @@ $(document).ready(function(){(function(){
  
 <script type="text/javascript">
 
+	$(".uploadResult").on("click", "li", function(e){
+		var liObj = $(this);
+		var path = encodeURIComponent(liObj.data("path") + "/" + liObj.data("uuid") + "_" + liObj.data("filename"));
+		console.log("callpath before replacing in get.jsp: " + path);
+		if(liObj.data("type")){ //이미지라면 원본 파일 보여주기
+			showImage(path.replace(new RegExp(/\\/g), "/"));
+		}else{ //일반파일이라면 다운로드처리
+			self.location = "/download?fileName=" + path;
+		}
+	});
 	
+	$(".bigPictureWrapper").on("click",function(e){
+		$(".bigPicture").animate({width:'0%', height:'0%'},1000);
+		setTimeout(function(){
+			$(".bigPictureWrapper").hide();
+		},1000);
+	})
+	
+	function showImage(fileCallPath){
+		alert(fileCallPath);
+		
+		$(".bigPictureWrapper").css("display", "flex").show();
+		$(".bigPicture").html("<img src='/display?fileName=" + fileCallPath + "'/>").animate({width:'100%', height:'100%'},1000);
+	}
 
 	//댓글 관련 로딩 함수
 	$(document).ready(function(){

@@ -17,4 +17,7 @@
  		select * from tbl_attach1 where bno = #{bno}
  	</select>
  	
+ 	<delete id="deleteAll">
+ 		delete from tbl_attach1 where bno = #{bno}
+ 	</delete>
 </mapper>

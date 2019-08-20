@@ -1,5 +1,9 @@
 package org.zerock.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -86,7 +90,11 @@ public class BoardController {
 	@PostMapping("/remove")
 	public String remove(@RequestParam Long bno, RedirectAttributes rttr, @ModelAttribute("cri")Criteria cri) {
 		log.info("remove(@RequestParam Long bno, RedirectAttributes rttr)");
-		if(service.remove(bno)) {
+		
+		List<BoardAttachVO> attachList = service.getAttachList(bno); //삭제전에 해당 게시글의 첨부파일들 정보를 획득
+		
+		if(service.remove(bno)) { //DB의 게시글과 파일정보들 삭제(db의 작업이 먼저 실행되어야 함)
+			deleteFiles(attachList); //서버 컴퓨터의 폴더에 존재하는 파일들 삭제
 			rttr.addFlashAttribute("result", "success");
 		}		
 //		rttr.addAttribute("pageNum", cri.getPageNum());
@@ -106,6 +114,31 @@ public class BoardController {
 	}
 	
 	
+	private void deleteFiles(List<BoardAttachVO> attachList) {
+		
+		if(attachList == null || attachList.size() == 0) {
+			return;
+		}
+		
+		log.info("=================DELETE ATTACH FILES===================");
+		log.info(attachList);
+		log.info("=======================================================");
+		
+		attachList.forEach(attach->{
+			Path originalFile = Paths.get("C:\\uploadEx\\" + attach.getUploadPath() + "\\" + attach.getUuid() 
+												+ "_" + attach.getFileName());
+			try {
+				Files.deleteIfExists(originalFile); //(존재시)원본 파일/이미지 폴더에서 삭제
+				if(Files.probeContentType(originalFile).startsWith("image")) { //이미지라면 섬네일 삭제
+					Path thumbnailFilePath = Paths.get("C:\\uploadEx\\" + attach.getUploadPath() + "\\s_" + attach.getUuid() 
+												+ "_" + attach.getFileName());
+					Files.delete(thumbnailFilePath);
+				}
+			}catch(IOException e) {
+				log.error("delete file error" + e.getMessage());
+			}
+		});
+	}
 	
 }
 
