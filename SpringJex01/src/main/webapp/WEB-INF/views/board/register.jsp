@@ -3,6 +3,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <%@include file="../includes/header.jsp"%>
 
 <div class="bigPictureWrapper">
@@ -73,6 +75,7 @@
 			<div class="panel-heading">Board Register</div>
 			<div class="panel-body">
 				<form role="form" action="/board/register" method="post">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					<div class="form-group">
 						<label>Title</label> <input class="form-control" name="title" />
 					</div>
@@ -81,7 +84,8 @@
 						<textarea class="form-control" rows="3" name="content"></textarea>
 					</div>
 					<div class="form-group">
-						<label>Writer</label> <input class="form-control" name="writer" />
+						<label>Writer</label> <input class="form-control" name="writer" 
+								value="<sec:authentication property='principal.username'/>" readonly="readonly"/>
 					</div>
 					<button type="submit" class="btn btn-default">Submit Button</button>
 					<button type="reset" class="btn btn-default">Reset Button</button>
@@ -146,6 +150,9 @@
 			return true;
 		}
 		
+		var csrfHeaderName = "${_csrf.headerName}";
+		var csrfTokenValue = "${_csrf.token}";
+		
 		//서버에 업로드작업
 		$("input[type='file']").change(function(e){
 			var formData = new FormData();
@@ -164,6 +171,9 @@
 				processData: false,
 				contentType: false,
 				data: formData,
+				beforeSend: function(xhr){
+					xhr.setRequestHeader(csrfHeaderName,csrfTokenValue);
+				},
 				type: "POST",
 				dataType:"json",
 				success: function(result){
@@ -224,6 +234,9 @@
 				data: {fileName:targetFile, type:type},
 				type: "POST",
 				dataType: "text",
+				beforeSend: function(xhr){
+					xhr.setRequestHeader(csrfHeaderName,csrfTokenValue);
+				},
 				success: function(result){
 					alert(result);
 					targetLi.remove(); //li태그가 없어지면 input[type='file']이 change된 것이므로 다시 showUploadResult()함수를 실행시킴

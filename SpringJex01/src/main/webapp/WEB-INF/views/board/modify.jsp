@@ -3,6 +3,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <%@include file="../includes/header.jsp"%>
 
 <style>
@@ -69,8 +71,9 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">Board Modify Page</div>
 			<div class="panel-body">
+				<sec:authentication property="principal" var="pinfo"/>
 				<form role="form" action="/board/modify" method="POST">			
-				
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					<input type="hidden" name="pageNum" value="<c:out value='${cri.pageNum}'/>"/>
 					<input type="hidden" name="amount" value="<c:out value='${cri.amount}'/>"/>
 					<input type="hidden" name="type" value="<c:out value='${cri.type}'/>"/>
@@ -103,8 +106,12 @@
 						<input class="form-control" name="updatedate" 
 							value="<fmt:formatDate pattern='yyyy/MM/dd' value='${board.updatedate}'/>" readonly="readonly"> 
 					</div>
-					<button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
-					<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
+					<sec:authorize access="isAuthenticated()">
+						<c:if test="${board.writer eq pinfo.username}">
+							<button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
+							<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>		
+						</c:if>
+					</sec:authorize>
 					<button type="submit" data-oper="list" class="btn btn-info">List</button>
 				</form>
 			</div>
@@ -196,6 +203,8 @@
 			return true;
 		}
 		
+		var csrfHeaderName = "${_csrf.headerName}";
+		var csrfTokenValue = "${_csrf.token}";
 		
 		//서버에 업로드작업
 		$("input[type='file']").change(function(e){
@@ -215,6 +224,9 @@
 				processData: false,
 				contentType: false,
 				data: formData,
+				beforeSend: function(xhr){
+					xhr.setRequestHeader(csrfHeaderName,csrfTokenValue);
+				},
 				type: "POST",
 				dataType:"json",
 				success: function(result){
@@ -296,6 +308,20 @@
 				formObj.append(amountTag);
 				formObj.append(typeTag);
 				formObj.append(keywordTag);
+			}else if(operation === "modify"){
+				console.log("modify clicked");
+				var str = "";
+				
+				$(".uploadResult ul li").each(function(i, obj){
+					var jobj = $(obj);
+					console.dir(jobj);
+					
+					str += "<input type='hidden' name='attachList["+i+"].fileName' value='"+jobj.data("filename")+"'/>";
+					str += "<input type='hidden' name='attachList["+i+"].uploadPath' value='"+jobj.data("path")+"'/>";
+					str += "<input type='hidden' name='attachList["+i+"].uuid' value='"+jobj.data("uuid")+"'/>";
+					str += "<input type='hidden' name='attachList["+i+"].fileType' value='"+jobj.data("type")+"'/>";
+				});
+				formObj.append(str).submit();
 			}
 			formObj.submit();
 		});

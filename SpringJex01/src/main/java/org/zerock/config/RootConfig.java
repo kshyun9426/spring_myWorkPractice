@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -17,12 +18,15 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @ComponentScan(basePackages= {"org.zerock.service"})
+@ComponentScan(basePackages="org.zerock.task")
 @MapperScan(basePackages= {"org.zerock.mapper"})
+
 //@EnableAspectJAutoProxy
+@EnableScheduling
 @EnableTransactionManagement
 public class RootConfig {
 	
-	//HikariCP는 빠르고 효율적인 커넥션풀을 제공함
+	//HikariCP�뒗 鍮좊Ⅴ怨� �슚�쑉�쟻�씤 而ㅻ꽖�뀡���쓣 �젣怨듯븿
 	@Bean
 	public DataSource dataSource() {
 		HikariConfig hikariConfig = new HikariConfig();
@@ -48,6 +52,7 @@ public class RootConfig {
 	public DataSourceTransactionManager txManager() {
 		return new DataSourceTransactionManager(dataSource());
 	}
+	
 }
 
 

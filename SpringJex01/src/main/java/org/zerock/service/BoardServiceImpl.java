@@ -52,7 +52,15 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public boolean modify(BoardVO board) {
 		log.info("BoardServiceImpl of modify()...........: " + board);
-		return boardMapper.update(board) == 1;
+		boardAttachMapper.deleteAll(board.getBno());
+		boolean modifyResult = boardMapper.update(board) == 1;
+		if(modifyResult && board.getAttachList() != null && board.getAttachList().size() > 0) {
+			board.getAttachList().forEach(attachVO->{
+				attachVO.setBno(board.getBno());
+				boardAttachMapper.insert(attachVO);
+			});
+		}
+		return modifyResult;
 	}
 
 	@Transactional

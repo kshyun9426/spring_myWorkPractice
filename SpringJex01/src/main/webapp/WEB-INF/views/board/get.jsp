@@ -3,6 +3,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <%@include file="../includes/header.jsp"%>
 
 <style>
@@ -57,7 +59,7 @@
 	width: 600px;
 }
 </style>
-
+<sec:authentication property="principal" var="pinfo"/>
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Board Read</h1>
@@ -88,7 +90,11 @@
 					<label>Writer</label>
 					<input class="form-control" name="writer" value="<c:out value='${board.writer}'/>" readonly="readonly"/>
 				</div>
-				<button class="btn btn-default" data-oper="modify">Modify</button>
+					<sec:authorize access="isAuthenticated()">
+						<c:if test="${pinfo.username eq board.writer}">
+							<button class="btn btn-default" data-oper="modify">Modify</button>
+						</c:if>
+					</sec:authorize>
 				<button class="btn btn-info" data-oper="list">List</button>
 				<form id="operForm" action="/board/modify" method="GET">
 					<input type="hidden" id="bno" name="bno" value="<c:out value='${board.bno}'/>"/>
@@ -133,7 +139,9 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<i class="fa fa-comments fa-fw"></i>Reply
-				<button id="addReplyBtn" class="btn btn-primary btn-xs pull-right">New Reply</button>
+				<sec:authorize access="isAuthenticated()">
+					<button id="addReplyBtn" class="btn btn-primary btn-xs pull-right">New Reply</button>
+				</sec:authorize>
 			</div>
 			<!-- /.panel-heading -->
 			<div class="panel-body">
@@ -166,7 +174,7 @@
 				</div>
 				<div class="modal-group">
 					<label>Replyer</label>
-					<input class="form-control" name="replyer" value="replyer"/>
+					<input class="form-control" name="replyer" value="replyer" readonly="readonly"/>
 				</div>
 				<div class="modal-group">
 					<label>Reply Date</label>
@@ -362,16 +370,31 @@ $(document).ready(function(){(function(){
 		var modalRemoveBtn = $("#modalRemoveBtn");
 		var modalRegisterBtn = $("#modalRegisterBtn");
 		
+		var replyer = null;
+		
+		var csrfHeaderName = "${_csrf.headerName}";
+		var csrfTokenValue = "${_csrf.token}";
+		
+		<sec:authorize access="isAuthenticated()">
+			replyer = '<sec:authentication property="principal.username"/>';
+		</sec:authorize>
+		
 		//댓글 추가 버튼 클릭시 모달창
 		$("#addReplyBtn").on("click", function(e){
 			
 			modal.find("input").val("");
+			modal.find("input[name='replyer']").val(replyer);
 			modalInputReplyDate.closest("div").hide();
 			modal.find("button[id!='modalCloseBtn']").hide();
 			
 			modalRegisterBtn.show();
 			$(".modal").modal("show");
 			
+		});
+		
+		//아래와 같이 구현해놓으면 ajax함수에 일일히 선언해놓을 필요가 없이 다 전송이 가능
+		$(document).ajaxSend(function(e, xhr, options){
+			xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
 		});
 		
 		//댓글모달에서 등록버튼 클릭시 
@@ -415,7 +438,27 @@ $(document).ready(function(){(function(){
 		
 		modalModBtn.on("click", function(e){
 			
-			var reply = {rno:modal.data("rno"), reply:modalInputReply.val()};
+			var originalReplyer = modalInputReplyer.val();
+			
+			var reply = {
+				rno:modal.data("rno"),
+				reply:modalInputReply.val(),
+				replyer:originalReplyer
+			};
+			
+			if(!replyer){
+				alert("로그인 후 수정이 가능합니다.");
+				modal.modal("hide");
+				return;
+			}
+			
+			console.log("Original Replyer: " + originalReplyer);
+			
+			if(replyer != originalReplyer){
+				alert("본인이 작성한 댓글만 수정이 가능합니다.");
+				modal.modal("hide");
+				return;
+			}
 			
 			replyService.update(reply, function(result){
 				alert(result);
@@ -428,7 +471,23 @@ $(document).ready(function(){(function(){
 			
 			var rno = modal.data("rno");
 			
-			replyService.remove(rno, function(result){
+			if(!replyer){
+				alert("로그인 후 삭제가 가능합니다.");
+				modal.modal("hide");
+				return;
+			}
+			
+			var originalReplyer = modalInputReplyer.val();
+			
+			console.log("Original Replyer: " + originalReplyer);
+			
+			if(replyer != originalReplyer){
+				alert("본인이 작성한 댓글만 삭제가 가능합니다.");
+				modal.modal("hide");
+				return;
+			}
+			
+			replyService.remove(rno, originalReplyer, function(result){
 				alert(result);
 				modal.modal("hide");
 				showList(pageNum);
